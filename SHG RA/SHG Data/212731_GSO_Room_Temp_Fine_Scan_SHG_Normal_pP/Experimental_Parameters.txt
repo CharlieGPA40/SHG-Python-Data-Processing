@@ -1,0 +1,12 @@
+Date: March 02, 2023 21:27:31
+Sample: GSO_Room_Temp_Fine_Scan
+Fundamental or nonlinear: SHG
+Incidence angle: Normal
+Power at sample (mW): 1.10
+Start angle (degrees): 0 
+Termination angle (degrees): 360 
+Step size (degrees): 5 
+Polarization configuration: p-P 
+ExposureTime (s): 120.00000
+EMGain: 300
+Accumulation: 2

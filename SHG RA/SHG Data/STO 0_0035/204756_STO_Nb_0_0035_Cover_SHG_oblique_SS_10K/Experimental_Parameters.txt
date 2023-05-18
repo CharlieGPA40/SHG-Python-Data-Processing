@@ -1,0 +1,12 @@
+Date: May 11, 2023 20:47:56
+Sample: STO_Nb_0_0035_Cover
+Fundamental or nonlinear: SHG
+Incidence angle: oblique
+Power at sample (mW): 0.73
+Start angle (degrees): 0 
+Termination angle (degrees): 360 
+Step size (degrees): 10 
+Polarization configuration: S-S 
+ExposureTime (s): 20.00000
+EMGain: 300
+Accumulation: 2

@@ -1,0 +1,12 @@
+Date: April 27, 2023 17:44:07
+Sample: STO_Nb_0_002_56K_warmup
+Fundamental or nonlinear: SHG
+Incidence angle: Oblique
+Power at sample (mW): 0.98
+Start angle (degrees): 0 
+Termination angle (degrees): 0 
+Step size (degrees): 1 
+Polarization configuration: S-S 
+ExposureTime (s): 20.00000
+EMGain: 300
+Accumulation: 5

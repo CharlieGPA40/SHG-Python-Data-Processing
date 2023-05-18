@@ -1,0 +1,12 @@
+Date: August 22, 2022 15:48:08
+Sample: LSMO_10K_test3
+Fundamental or nonlinear: SHG
+Incidence angle: Normal
+Power at sample (mW): 1.80
+Start angle (degrees): 0 
+Termination angle (degrees): 360 
+Step size (degrees): 10 
+Polarization configuration: S-S 
+ExposureTime (s): 1.00000
+EMGain: 300
+Accumulation: 2

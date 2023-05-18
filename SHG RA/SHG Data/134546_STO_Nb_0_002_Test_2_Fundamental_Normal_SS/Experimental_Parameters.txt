@@ -1,0 +1,12 @@
+Date: April 19, 2023 13:45:46
+Sample: STO_Nb_0_002_Test_2
+Fundamental or nonlinear: Fundamental
+Incidence angle: Normal
+Power at sample (mW): 0.01
+Start angle (degrees): 0 
+Termination angle (degrees): 360 
+Step size (degrees): 10 
+Polarization configuration: S-S 
+ExposureTime (s): 1.00000
+EMGain: 3
+Accumulation: 2
