@@ -10,6 +10,9 @@ import matplotlib.patches as patches
 import numpy as np
 import pandas as pd
 from tkinter import filedialog
+from pptx import Presentation
+from pptx.util import Inches, Pt
+from pptx.shapes.autoshape import Shape as shape
 
 
 class SHG_Processing():
@@ -33,6 +36,11 @@ class SHG_Processing():
     for i in range(len(file_name)-1, 0, -1):
         if file_name[i] == '_':
             file_name = file_name[:i]
+            break
+
+    for i in range(len(folder_selected) - 1, 0, -1):
+        if folder_selected[i] == '/':
+            folder_name_pptx = folder_selected[i+1:]
             break
 
     folder_selected = folder_selected + "/"
@@ -248,6 +256,37 @@ class SHG_Processing():
     # pyplot.show()
     # pyplot.polar(deg_file, y_fit)
     # pyplot.show()
+
+
+
+    if os.path.exists(folder_selected + 'Results.pptx'):
+        prs = Presentation(folder_selected + 'Results.pptx')
+        prs.slide_width = Inches(13.33)
+        prs.slide_height = Inches(7.5)
+    else:
+        prs = Presentation()
+        prs.slide_width = Inches(13.33)
+        prs.slide_height = Inches(7.5)
+        prs.save(folder_selected + 'Results.pptx')
+        prs = Presentation(folder_selected + 'Results.pptx')
+        prs.slide_width = Inches(13.33)
+        prs.slide_height = Inches(7.5)
+
+    SHG_Image = folder_selected + 'Figure_1.png'
+    SHG_Signal = folder_selected + 'Figure_2.png'
+    blank_slide_layout = prs.slide_layouts[6]
+    slide = prs.slides.add_slide(blank_slide_layout)
+    SHG_Image_img = slide.shapes.add_picture(SHG_Image, Inches(0.32), Inches(1.42), Inches(6.39))
+    SHG_Signal_img = slide.shapes.add_picture(SHG_Signal, Inches(6.49), Inches(1.42), Inches(6.39))
+    text_frame = slide.shapes.add_textbox(Inches(0.18), Inches(0.2), Inches(6.67), Inches(0.4))
+    text_frame = text_frame.text_frame
+    p = text_frame.paragraphs[0]
+    run = p.add_run()
+    run.text = str(folder_name_pptx)
+    font = run.font
+    font.name = 'Calibri'
+    font.size = Pt(18)
+    prs.save(folder_selected + 'Results.pptx')
 
 
 if __name__ == '__main__':
