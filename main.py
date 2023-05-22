@@ -60,7 +60,7 @@ class SHG_Processing():
     SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
     # SHG_Raw = SHG_Raw[128:384, 128:384]
     fig, ax = pyplot.subplots()
-    im = ax.imshow(SHG_Raw, vmin=0, vmax=2000)
+    im = ax.imshow(SHG_Raw, vmin=0, vmax=5000)
     polarization = Parameter.iat[8, 1]
     fig.colorbar(im, ax=ax, label='{} Polarization'.format(polarization))
     exposure_time = str(float(Parameter.iat[9, 1]))

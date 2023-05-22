@@ -12,10 +12,19 @@ from tkinter import filedialog
 import matplotlib.patches as patches
 import pandas as pd
 from PIL import Image
+import os
 
 root = Tk()
 root.withdraw()
 folder_selected = filedialog.askdirectory(initialdir="SHG RA/SHG Data")
+dir_list = os.listdir(folder_selected)
+file_name = dir_list[0]
+file_name_1 = dir_list[1]
+for i in range(len(file_name)-1, 0, -1):
+    if file_name[i] == '_':
+        file_name = file_name[:i]
+        break
+
 
 folder_selected = folder_selected + "/"
 data_sel = 'n'
@@ -33,13 +42,16 @@ half_region_size = (np.ceil(region_size / 2)).astype(int)
 
 Parameter = pd.read_csv(folder_selected + "Experimental_Parameters.txt", header=None, sep=':')
 exposure_time = str(float(Parameter.iat[9, 1]))
+filename = Parameter.iat[1, 1]
+filename = filename[1:] + '_0deg'
+print(filename)
 title = str(Parameter.iat[1, 1]) + '' + str(Parameter.iat[2, 1]) + '' + str(Parameter.iat[3, 1]) \
             + '\n' + str(Parameter.iat[4, 1]) + 'mW Exposure Time ' + exposure_time + 's Averaging ' \
             + str(int(Parameter.iat[11, 1]))
 polarization = Parameter.iat[8, 1]
 
 fig, ax = plt.subplots()
-SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Temp_Dep_0deg_{}K_Warm_Up".format(10) + ".txt", dtype=int, delimiter=',')
+SHG_Raw = np.loadtxt(folder_selected + filename + '_{}K_Warm_Up'.format(10) + ".txt", dtype=int, delimiter=',')
 # SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Cover_0deg{}K".format(10) + ".txt", dtype=int, delimiter=',')
 # SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Cover_0deg_"+"{}K".format(10) + "_Cooling_Down.txt", dtype=int, delimiter=',')
 region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
@@ -61,7 +73,7 @@ tempset = [5, 10, 15, 20, 25, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54
 final_temp = 122 #122
 for temp in range(8, final_temp, 2):
     if temp == 41:
-        SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Cover_0deg"+"{}.1K".format(temp) + ".txt", dtype=int, delimiter=',')
+        SHG_Raw = np.loadtxt(folder_selected + filename + '_0deg'+"{}.1K".format(temp) + ".txt", dtype=int, delimiter=',')
         region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
                  center_y - half_region_size: center_y + half_region_size]
         small_sum = sum(map(sum, region))
@@ -71,7 +83,7 @@ for temp in range(8, final_temp, 2):
         sig_file = np.append(sig_file, sig)
         temp_file = np.append(temp_file, temp)
     temp_file = np.append(temp_file, temp)
-    SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Temp_Dep_0deg_{}K_Warm_Up".format(temp) + ".txt", dtype=int, delimiter=',')
+    SHG_Raw = np.loadtxt(folder_selected + filename + '_{}K_Warm_Up'.format(temp) + ".txt", dtype=int, delimiter=',')
     # SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Cover_0deg{}K".format(temp) + ".txt",
     #                      dtype=int, delimiter=',')
     region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
@@ -136,7 +148,7 @@ for temp in range(8, final_temp, 2):
         sig_file_Cooling = np.append(sig_file_Cooling, sig)
         temp_file = np.append(temp_file, temp)
     temp_file = np.append(temp_file, temp)
-    SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Temp_Dep_0deg_{}K_Cooling_Down".format(temp) + ".txt", dtype=int, delimiter=',')
+    SHG_Raw = np.loadtxt(folder_selected + filename + '_{}K_Cooling_Down'.format(temp) + ".txt", dtype=int, delimiter=',')
     # SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Cover_0deg_{}K_Cooling_Down".format(temp) + ".txt",
     #                      dtype=int, delimiter=',')
     region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
