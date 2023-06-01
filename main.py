@@ -29,7 +29,7 @@ class SHG_Processing():
 
     root = Tk()
     root.withdraw()
-    folder_selected = filedialog.askdirectory(initialdir="SHG RA/SHG Data")
+    folder_selected = filedialog.askdirectory(initialdir="/Users/labaccess/Library/CloudStorage/Box-Box/Jin Lab Shared Folder/SHG-RA data")
     dir_list = os.listdir(folder_selected)
     file_name = dir_list[0]
     file_name_1 = dir_list[1]
@@ -58,6 +58,17 @@ class SHG_Processing():
     # for degree in range(0, 10, step_size):
     degree = 10
     SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
+
+
+    
+
+
+
+
+
+
+
+
     # SHG_Raw = SHG_Raw[128:384, 128:384]
     fig, ax = pyplot.subplots()
     im = ax.imshow(SHG_Raw, vmin=0, vmax=5000)
