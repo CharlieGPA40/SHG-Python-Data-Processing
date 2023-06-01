@@ -24,12 +24,16 @@ class SHG_Processing():
     isExist = os.path.exists(SHGpath)
     if not isExist:  # Create a new directory because it does not exist
         os.makedirs(SHGpath)
-        print("The new directory is created!")
+        print("The new directory is created!\n")
         print('--------------------------------------------\n')
 
-    root = Tk()
-    root.withdraw()
+    # root = Tk()
+    # root.withdraw()
     folder_selected = filedialog.askdirectory(initialdir="SHG RA/SHG Data")
+    # folder_selected = folder_selected + '/'
+    # filename = filedialog.askopenfilename(title='Select a csv File', initialdir=folder_selected,
+    #                                       filetypes=(('csv files', '*.csv'),('All files', '*.*')))
+    #
     dir_list = os.listdir(folder_selected)
     file_name = dir_list[0]
     file_name_1 = dir_list[1]
@@ -68,7 +72,7 @@ class SHG_Processing():
             + '\n' + str(Parameter.iat[4, 1]) + 'mW Exposure Time ' + exposure_time + 's Averaging ' \
             + str(int(Parameter.iat[11, 1]))
     pyplot.title(title + ' at {} Degree'.format(degree), pad=10, wrap=True)
-    # pyplot.show()
+        # pyplot.show()
 
     def onclick(event):
         if event.dblclick:

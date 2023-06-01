@@ -51,7 +51,7 @@ title = str(Parameter.iat[1, 1]) + '' + str(Parameter.iat[2, 1]) + '' + str(Para
 polarization = Parameter.iat[8, 1]
 
 fig, ax = plt.subplots()
-SHG_Raw = np.loadtxt(folder_selected + filename + '_{}K_Warm_Up'.format(10) + ".txt", dtype=int, delimiter=',')
+SHG_Raw = np.loadtxt(folder_selected + filename + '_{}K_Warm_Up'.format(100) + ".txt", dtype=int, delimiter=',')
 # SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Cover_0deg{}K".format(10) + ".txt", dtype=int, delimiter=',')
 # SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Cover_0deg_"+"{}K".format(10) + "_Cooling_Down.txt", dtype=int, delimiter=',')
 region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
