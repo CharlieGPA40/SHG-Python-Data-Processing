@@ -59,15 +59,22 @@ class SHG_Processing():
     degree = 10
     SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
 
-
-    
-
-
-
-
-
-
-
+    # from scipy.fft import ifftn
+    # import matplotlib.pyplot as plt
+    # import matplotlib.cm as cm
+    # import numpy as np
+    #
+    # fig, ax = pyplot.subplots()
+    # ft = np.fft.ifftshift(SHG_Raw)
+    # ft1 = np.fft.fft2(ft)
+    # ft2 = np.fft.fftshift(ft1)
+    # ft2= np.log(abs(ft2))
+    # print(ft2.argmax())
+    # print(ft2.argmax()/512)
+    # print(ft2.argmax()%512)
+    # print(np.max(ft2))
+    # ax.imshow(np.log(abs(ft2)))
+    # plt.show()
 
     # SHG_Raw = SHG_Raw[128:384, 128:384]
     fig, ax = pyplot.subplots()
@@ -220,6 +227,11 @@ class SHG_Processing():
     for i in range(len(sig_file)):
         sig_file[i] = sig_file[i] - (slope * deg_file[i] + const)
         sig_file[i] = (sig_file[i]/30)/380000
+        csv_file_name = 'Processed_Data.csv'
+        comb = pd.DataFrame(list(zip([deg_file[i]], [sig_file[i]])))
+        rec_data = pd.DataFrame()
+        rec_data = pd.concat([rec_data, comb], ignore_index=True, axis=1)
+        rec_data.to_csv(folder_selected + csv_file_name, mode='a', index=False, encoding='utf-8-sig', header=None)
 
     pyplot.plot(deg_file, sig_file, linewidth=5, color='blue')
     pyplot.show()
@@ -237,6 +249,9 @@ class SHG_Processing():
     pyplot.tight_layout()
     pyplot.savefig(folder_selected+"Figure_2.png")
     pyplot.show()
+
+
+
     # para, cm = optimize.curve_fit(shg_sin, deg_file[0:], sig_file[0:], method='lm', maxfev=50000)
     # y_fit = np.array(
     #     [shg_sin(x) for x in deg_file])
