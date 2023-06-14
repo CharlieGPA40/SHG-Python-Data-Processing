@@ -32,8 +32,11 @@ class SHG_Processing():
     folder_selected = filedialog.askdirectory(initialdir="/Users/labaccess/Library/CloudStorage/Box-Box/Jin Lab Shared Folder/SHG-RA data")
     dir_list = os.listdir(folder_selected)
     file_name = dir_list[0]
+    print(file_name)
     file_name_1 = dir_list[1]
     for i in range(len(file_name)-1, 0, -1):
+        # if file_name[i] == 'p':
+        #     file_name = file_name[:i+1]
         if file_name[i] == '_':
             file_name = file_name[:i]
             break
@@ -46,8 +49,11 @@ class SHG_Processing():
     folder_selected = folder_selected + "/"
     data_sel = 'n'
     Parameter = pd.read_csv(folder_selected + "Experimental_Parameters.txt", header=None, sep=':')
+    print(Parameter)
+    Date = Parameter.iat[0, 1]
     step_size = Parameter.iat[7, 1]
     step_size = int(step_size)
+    step_size = 10
     avg_x = 0
     avg_y = 0
     iteration = 0
@@ -56,8 +62,12 @@ class SHG_Processing():
     sig_file_org = []
 
     # for degree in range(0, 10, step_size):
-    degree = 10
-    SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
+    degree = 0
+    temp_temp = 80
+    # SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
+    # SHG_Raw = np.loadtxt(folder_selected + file_name + "{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
+    SHG_Raw = np.loadtxt(folder_selected + 'STO_Nb_0_0035_{}k_{}deg'.format(temp_temp, degree) + '.txt', dtype=int, delimiter=',')
+
 
     # from scipy.fft import ifftn
     # import matplotlib.pyplot as plt
@@ -170,7 +180,12 @@ class SHG_Processing():
     # min_pos = (postion_max_x + 235 - half_region_size)[0]
     # max_pos = (postion_max_x + 235 + half_region_size)[0]
 
-    SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(0) + ".txt", dtype=int, delimiter=',')
+    SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
+    # SHG_Raw = np.loadtxt(folder_selected + file_name + "{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
+
+    # SHG_Raw = np.loadtxt(folder_selected + 'STO_Nb_0_0035_temp_ra_{}deg_{}K_Warm_Up'.format(degree,temp_temp) + '.txt', dtype=int,
+    #                     delimiter=',')
+
     fig, ax = pyplot.subplots()
         # ax.imshow(SHG_Raw)
     region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
@@ -187,6 +202,10 @@ class SHG_Processing():
     for degree in range(0, 365, step_size):
         deg_file = np.append(deg_file, degree)
         SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
+        # SHG_Raw = np.loadtxt(folder_selected + file_name + "{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
+
+        # SHG_Raw = np.loadtxt(folder_selected + 'STO_Nb_0_0035_temp_ra_{}deg_{}K_Warm_Up'.format(degree,temp_temp) + '.txt',
+                             # dtype=int, delimiter=',')
         # fig, ax = pyplot.subplots()
         # ax.imshow(SHG_Raw)
         region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
@@ -305,13 +324,22 @@ class SHG_Processing():
     SHG_Image_img = slide.shapes.add_picture(SHG_Image, Inches(0.32), Inches(1.42), Inches(6.39))
     SHG_Signal_img = slide.shapes.add_picture(SHG_Signal, Inches(6.49), Inches(1.42), Inches(6.39))
     text_frame = slide.shapes.add_textbox(Inches(0.18), Inches(0.2), Inches(6.67), Inches(0.4))
+    Data_frame = slide.shapes.add_textbox(Inches(11.19), Inches(0.2), Inches(2.04), Inches(0.4))
     text_frame = text_frame.text_frame
+    Data_frame = Data_frame.text_frame
     p = text_frame.paragraphs[0]
+    d = Data_frame.paragraphs[0]
     run = p.add_run()
     run.text = str(folder_name_pptx)
     font = run.font
     font.name = 'Calibri'
     font.size = Pt(18)
+
+    run_d = d.add_run()
+    run_d.text = str(Date)
+    font_d = run_d.font
+    font_d.name = 'Calibri'
+    font_d.size = Pt(18)
     prs.save(folder_selected + 'Results.pptx')
 
 

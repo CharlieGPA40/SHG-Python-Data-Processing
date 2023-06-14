@@ -111,4 +111,3 @@ for i in range(0,19,1):
     copy_ppt()
     back_to_org()
     start_new(x+i*15)
- 
