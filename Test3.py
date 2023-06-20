@@ -1,4 +1,5 @@
 from Stoner import Data
+import Stoner
+import numpy
 
-
-Stoner.FileFormats.QDFile.load()
+v= Stoner.Data.load('50K.DAT', filetype=Stoner.formats.instruments.QDFile.load)

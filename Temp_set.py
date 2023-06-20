@@ -126,7 +126,7 @@ plt.show()
 # root = Tk()
 # root.withdraw()
 # folder_selected = filedialog.askdirectory(initialdir="SHG RA/SHG Data")
-#
+
 # folder_selected = folder_selected + "/"
 data_sel = 'n'
 avg_x = 0

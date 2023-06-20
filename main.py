@@ -53,7 +53,6 @@ class SHG_Processing():
     Date = Parameter.iat[0, 1]
     step_size = Parameter.iat[7, 1]
     step_size = int(step_size)
-    step_size = 10
     avg_x = 0
     avg_y = 0
     iteration = 0
@@ -64,9 +63,9 @@ class SHG_Processing():
     # for degree in range(0, 10, step_size):
     degree = 0
     temp_temp = 80
-    # SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
+    SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
     # SHG_Raw = np.loadtxt(folder_selected + file_name + "{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-    SHG_Raw = np.loadtxt(folder_selected + 'STO_Nb_0_0035_{}k_{}deg'.format(temp_temp, degree) + '.txt', dtype=int, delimiter=',')
+    # SHG_Raw = np.loadtxt(folder_selected + 'STO_Nb_0_0035_{}k_{}deg'.format(temp_temp, degree) + '.txt', dtype=int, delimiter=',')
 
 
     # from scipy.fft import ifftn
@@ -237,8 +236,6 @@ class SHG_Processing():
     pyplot.show()
     pyplot.plot(deg_file, sig_file, linewidth=5, color='blue')
     pyplot.show()
-    print(deg_file)
-    print(sig_file)
 
     slope = (sig_file[-1] - sig_file[0]) / (deg_file[-1] - deg_file[0])
     const = sig_file[-1] - slope * deg_file[-1]
@@ -258,8 +255,6 @@ class SHG_Processing():
     max_lim = max(sig_file)
     min_lim = min(sig_file)
 
-    print(deg_file)
-    print(sig_file)
 
     fig, ax = pyplot.subplots(subplot_kw={'projection': 'polar'})
     ax.plot(deg_file, sig_file, color='red')
