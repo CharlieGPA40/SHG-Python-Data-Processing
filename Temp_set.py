@@ -108,20 +108,14 @@ print(sig_file)
 sig_file = sig_file.astype(np.float64)
 max_lim = max(sig_file)
 min_lim = min(sig_file)
-deg_file = temp_file * np.pi / 180
-deg_file = deg_file.astype(np.float64)
-fig, ax = plt.subplots()
-ax.plot(temp_file, sig_file, linewidth=3, color='red', label="Warm Up")
-ax.scatter(temp_file, sig_file, color='red')
-ax.set_xlabel('Temperature (K)')
-ax.set_ylabel('SHG Intensity (counts)')
-# ax.set_ylim(bottom=min_lim*0.85, top=max_lim*1.05)
-# ax.set_ylim(bottom=0, top=max_lim*1.05)
-plt.legend()
-plt.title(title + '{} Polarization'.format(polarization), pad=10, wrap=True)
-plt.tight_layout()
-plt.savefig(folder_selected+"Figure_1.png")
-plt.show()
+temp_file = temp_file * np.pi / 180
+temp_file = temp_file.astype(np.float64)
+
+sig_df = pd.DataFrame(columns=['Temperature', 'Signal'])
+sig_df_comb = pd.DataFrame(list(zip(temp_file, sig_file)))
+spilt_df = pd.concat([sig_df, sig_df_comb], ignore_index=True, axis=1)
+spilt_df.to_csv(folder_selected + '/temp_dep_warm_up.csv', index=False, header=False)
+
 #
 # root = Tk()
 # root.withdraw()
