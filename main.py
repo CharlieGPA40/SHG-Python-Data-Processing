@@ -40,7 +40,7 @@ class SHG_Processing():
         if file_name[i] == '_':
             file_name = file_name[:i]
             break
-
+    print()
     for i in range(len(folder_selected) - 1, 0, -1):
         if folder_selected[i] == '/':
             folder_name_pptx = folder_selected[i+1:]
@@ -48,7 +48,7 @@ class SHG_Processing():
 
     folder_selected = folder_selected + "/"
     data_sel = 'n'
-    Parameter = pd.read_csv(folder_selected + "Experimental_Parameters.txt", header=None, sep=':')
+    Parameter = pd.read_csv(folder_selected + "Experimental_Parameters.txt", header=None, sep=':', engine='c')
     print(Parameter)
     Date = Parameter.iat[0, 1]
     step_size = Parameter.iat[7, 1]
