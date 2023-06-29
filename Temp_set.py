@@ -86,7 +86,6 @@ for temp in range(start_temp, final_temp, step_temp):
         sig = small_sum - bkg_pixel * region_size ** 2
         sig_file = np.append(sig_file, sig)
         temp_file = np.append(temp_file, temp)
-    print(temp)
     temp_file = np.append(temp_file, temp)
     SHG_Raw = np.loadtxt(folder_selected + filename + '_{}K_Warm_Up'.format(temp) + ".txt", dtype=int, delimiter=',')
     # SHG_Raw = np.loadtxt(folder_selected + "STO_Nb_0_0035_Cover_0deg{}K".format(temp) + ".txt",
@@ -97,24 +96,36 @@ for temp in range(start_temp, final_temp, step_temp):
     large_sum = sum(map(sum, SHG_Raw))
 
     bkg_pixel = (large_sum - small_sum) / (512 ** 2 - region_size ** 2)
-    print('Temp: ' + str(temp) + 'K bg: ' + str(bkg_pixel) + " " + str(small_sum) + " " + str(bkg_pixel*region_size**2) )
+    # print('Temp: ' + str(temp) + 'K bg: ' + str(bkg_pixel) + " " + str(small_sum) + " " + str(bkg_pixel*region_size**2) )
     sig = small_sum - bkg_pixel * region_size ** 2
     if temp > 90:
         sig = np.abs(sig *251883.12012012/127338.74674675)
         # sig =sig
     sig_file = np.append(sig_file, sig)
 
-print(sig_file)
 sig_file = sig_file.astype(np.float64)
 max_lim = max(sig_file)
 min_lim = min(sig_file)
-temp_file = temp_file * np.pi / 180
-temp_file = temp_file.astype(np.float64)
+deg_file = sig_file * np.pi / 180
+deg_file = deg_file.astype(np.float64)
 
 sig_df = pd.DataFrame(columns=['Temperature', 'Signal'])
 sig_df_comb = pd.DataFrame(list(zip(temp_file, sig_file)))
 spilt_df = pd.concat([sig_df, sig_df_comb], ignore_index=True, axis=1)
 spilt_df.to_csv(folder_selected + '/temp_dep_warm_up.csv', index=False, header=False)
+
+fig, ax = plt.subplots()
+ax.plot(temp_file, sig_file, linewidth=3, color='red', label="Warming Up")
+ax.scatter(temp_file, sig_file, color='red')
+ax.set_xlabel('Temperature (K)')
+ax.set_ylabel('SHG Intensity (counts)')
+# ax.set_ylim(bottom=min_lim*0.85, top=max_lim*1.05)
+plt.legend()
+# ax.set_ylim(bottom=0, top=max_lim*1.05)
+plt.title(title + '{} Polarization'.format(polarization), pad=10, wrap=True)
+plt.tight_layout()
+plt.savefig(folder_selected+"Figure_1.png")
+plt.show()
 
 #
 # root = Tk()
