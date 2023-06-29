@@ -253,6 +253,14 @@ class SHG_Processing():
             rec_data = pd.concat([rec_data, comb], ignore_index=True, axis=1)
             rec_data.to_csv(folder_selected + csv_file_name, mode='a', index=False, encoding='utf-8-sig', header=None)
 
+        min_sig = min(sig_file)
+        sig_file = sig_file - min_sig
+        csv_file_name = 'Processed_Data_abs.csv'
+        comb = pd.DataFrame(list(zip(deg_file, sig_file)))
+        rec_data = pd.DataFrame()
+        rec_data = pd.concat([rec_data, comb], ignore_index=True, axis=1)
+        rec_data.to_csv(folder_selected + csv_file_name, mode='w', index=False, encoding='utf-8-sig', header=None)
+
         pyplot.plot(deg_file, sig_file, linewidth=5, color='blue')
         pyplot.show()
 
@@ -271,44 +279,41 @@ class SHG_Processing():
         fit = True
         if fit == True:
             def shg_sin(params, x, data=None):
-                a1 = params['a1']
                 A = params['A']
                 a2 = params['a2']
                 B = params['B']
                 x0 = params['x0']
-                model = (np.sin(a1) ** 2) * (A*np.sin(a2-3*(x-x0))+B*np.sin(a2+(x-x0)))**2
+                model = (A*np.sin(a2-3*(x-x0))+B*np.sin(a2+(x-x0)))**2
                 if data is None:
                     return model
                 return model - data
 
             def shg_cos(params, x, data=None):
-                a1 = params['a1']
                 A = params['A']
                 a2 = params['a2']
                 B = params['B']
-                model = (np.cos(a1) ** 2) * (A*np.cos(a2-3*x)+B*np.cos(a2+3*x))**2
+                model = A*np.cos(a2-3*x)+B*np.cos(a2+3*x)*2
                 if data is None:
                     return model
                 return model - data
 
             # Create a Parameters object
             params = lmfit.Parameters()
-            params.add('a1', value=0.4)
-            params.add('A', value=0.7)
-            params.add('a2', value=-0.3)
-            params.add('B', value=1.6)
-            params.add('x0', value=0.05)
+            params.add('A', value=-0.1)
+            params.add('a2', value=-0.1)
+            params.add('B', value=11)
+            params.add('x0', value=0.1)
             result_sin = lmfit.minimize(shg_sin, params, args=(deg_file,), kws={'data': sig_file})
             # result_cos = lmfit.minimize(shg_cos, params, args=(deg_file,), kws={'data': sig_file})
-            sin_a1 = result_sin.params['a1'].value
+            # sin_a1 = result_sin.params['a1'].value
             sin_A = result_sin.params['A'].value
             sin_a2 = result_sin.params['a2'].value
             sin_B = result_sin.params['B'].value
             sin_x0 = result_sin.params['x0'].value
 
             fig, ax = pyplot.subplots(subplot_kw={'projection': 'polar'})
-            ax.scatter(deg_file, sig_file, color='black', s=0.5)
-            ax.plot(deg_file, result_sin.residual + sig_file, color='coral',linewidth=3)
+            ax.scatter(deg_file, sig_file, color='black', s=1)
+            ax.plot(deg_file, result_sin.residual + sig_file, color='red',linewidth=2)
             ax.set_ylim(bottom=min_lim*1.05, top=max_lim*1.05)
             pyplot.title(title + '{} Polarization'.format(polarization), pad=10, wrap=True)
             pyplot.tight_layout()
@@ -316,7 +321,7 @@ class SHG_Processing():
             pyplot.show()
 
             df = pd.DataFrame()
-            df_comb = pd.DataFrame(list(zip(sin_a1, sin_A, sin_a2, sin_B, sin_x0)))
+            df_comb = pd.DataFrame(list(zip([sin_A], [sin_a2], [sin_B], [sin_x0])))
             df = pd.concat([df, df_comb], ignore_index=True, axis=1)
             df.to_csv(folder_selected + 'Fitted_Data.csv', index=False)
 
