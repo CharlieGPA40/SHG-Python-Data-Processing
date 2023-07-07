@@ -114,61 +114,6 @@ class SHG_Processing():
         pyplot.savefig(folder_selected+"Figure_1.png")
         pyplot.show()
 
-        # pyplot.show()
-        # SHG_Plot = cv2.cvtColor(SHG_Raw, cv2.COLOR_BGR2GRAY)
-        # pyplot.imshow(SHG_Plot)
-        # pyplot.show()
-        # edges = cv2.Canny(SHG_Plot, threshold1=30, threshold2=100)
-        # pyplot.imshow(edges)
-        #     test_max = np.max(region_test)
-        #     test_postion_max = np.where(region_test == test_max)
-        #     test_max_x = test_postion_max[0].astype(int)
-        #     test_max_y = test_postion_max[1].astype(int)
-        #     # pyplot.scatter(test_max_x, test_max_y, s=60, color='tomato', marker='x')
-
-        #     avg_x = avg_x + test_max_x
-        #     avg_y = avg_y + test_max_y
-        #     iteration += 1
-        #     large_sum_test = sum(map(sum, SHG_Raw))
-        #     deg_file_org = np.append(deg_file_org, degree)
-        #     sig_file_org = np.append(sig_file_org, large_sum_test)
-        #
-        #
-        # # Testing
-        # postion_max_x = (avg_x / iteration).astype(int)
-        # postion_max_y = (avg_y / iteration).astype(int)
-        # SHG_Raw = np.loadtxt(folder + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-        #
-        #
-        # region = SHG_Raw[240:260, 235:255]
-        # pyplot.imshow(region)
-        # test_max = np.max(region)
-        # test_postion_max = np.where(region == test_max)
-        # test_max_x = int(test_postion_max[0])
-        # test_max_y = int(test_postion_max[1])
-        # pyplot.scatter(postion_max_x, postion_max_y, s=60, color='tomato', marker='x')
-        # pyplot.show()
-
-        # degree = 0
-        # while data_sel == 'n':
-        #     SHG_Raw = np.loadtxt(folder + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-        #     fig, ax = pyplot.subplots()
-        #     ax.imshow(SHG_Raw)
-        #     vmax = np.max(SHG_Raw)
-        #     postion_max = np.where(SHG_Raw == vmax)
-        #     max_x = int(postion_max[0])
-        #     max_y = int(postion_max[1])
-        #     region = SHG_Raw[max_x - 20: max_x + 20, max_y - 20: max_y + 20]
-        #     ax.imshow(region)
-        #     pyplot.show()
-        #     data_sel = input('Are you satisfied with the data selection? (Y/N) ').lower()
-        #     while data_sel not in ['y', 'n']:
-        #         print("Invalid Entry. Please enter again!")
-        #         data_sel = input('Are you satisfied with the data selection? (Y/N) ').lower()
-        #     degree = degree + 5
-
-
-
         deg_file = []
         sig_file = []
         center_x = int(cur_x)
@@ -184,10 +129,6 @@ class SHG_Processing():
         # max_pos = (postion_max_x + 235 + half_region_size)[0]
 
         SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-        # SHG_Raw = np.loadtxt(folder_selected + file_name + "{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-
-        # SHG_Raw = np.loadtxt(folder_selected + 'STO_Nb_0_0035_temp_ra_{}deg_{}K_Warm_Up'.format(degree,temp_temp) + '.txt', dtype=int,
-        #                     delimiter=',')
 
         fig, ax = pyplot.subplots()
             # ax.imshow(SHG_Raw)
@@ -205,21 +146,10 @@ class SHG_Processing():
         for degree in range(0, 365, step_size):
             deg_file = np.append(deg_file, degree)
             SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-            # SHG_Raw = np.loadtxt(folder_selected + file_name + "{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
 
-            # SHG_Raw = np.loadtxt(folder_selected + 'STO_Nb_0_0035_temp_ra_{}deg_{}K_Warm_Up'.format(degree,temp_temp) + '.txt',
-                                 # dtype=int, delimiter=',')
-            # fig, ax = pyplot.subplots()
-            # ax.imshow(SHG_Raw)
             region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
                              center_y - half_region_size: center_y + half_region_size]
-            # ax.imshow(SHG_Raw)
-            # ax.scatter(center_x, center_y, s=60, color='tomato', marker='x')
-            # rect = patches.Rectangle((center_x - half_region_size, center_y - half_region_size),
-            #                          region_size, region_size, linewidth=1, edgecolor='r', facecolor='none')
-            # # Add the patch to the Axes
-            # ax.add_patch(rect)
-            # pyplot.show()
+
             small_sum = sum(map(sum, region))
             large_sum = sum(map(sum, SHG_Raw))
             bkg_pixel = (large_sum - small_sum) / (512 ** 2 - region_size ** 2)
@@ -244,18 +174,17 @@ class SHG_Processing():
         slope = (sig_file[-1] - sig_file[0]) / (deg_file[-1] - deg_file[0])
         const = sig_file[-1] - slope * deg_file[-1]
         # const = sig_file[-1] + slope * deg_file[-1]
-        for i in range(len(sig_file)):
-            sig_file[i] = sig_file[i] - (slope * deg_file[i] + const)
-            sig_file[i] = (sig_file[i]/30)/380000
-            csv_file_name = 'Processed_Data.csv'
-            comb = pd.DataFrame(list(zip([deg_file[i]], [sig_file[i]])))
-            rec_data = pd.DataFrame()
-            rec_data = pd.concat([rec_data, comb], ignore_index=True, axis=1)
-            rec_data.to_csv(folder_selected + csv_file_name, mode='a', index=False, encoding='utf-8-sig', header=None)
+        sig_file = sig_file - (slope * deg_file + const)
+        sig_file = (sig_file/30)/380000
+        csv_file_name = 'Processed_Data.csv'
+        comb = pd.DataFrame(list(zip(deg_file, sig_file)))
+        rec_data = pd.DataFrame()
+        rec_data = pd.concat([rec_data, comb], ignore_index=True, axis=1)
+        rec_data.to_csv(folder_selected + csv_file_name, mode='a', index=False, encoding='utf-8-sig', header=None)
 
         min_sig = min(sig_file)
         sig_file = sig_file - min_sig
-        csv_file_name = 'Processed_Data_abs.csv'
+        csv_file_name = 'Processed_Data_Min_Shift.csv'
         comb = pd.DataFrame(list(zip(deg_file, sig_file)))
         rec_data = pd.DataFrame()
         rec_data = pd.concat([rec_data, comb], ignore_index=True, axis=1)
