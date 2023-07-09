@@ -294,6 +294,11 @@ class SHG_Processing():
 
 
 if __name__ == '__main__':
+    running = True
+    while running:
     # construct the main wi
-    window1 = SHG_Processing()
+        try:
+            window1 = SHG_Processing()
+        except KeyboardInterrupt:
+            break
     # endless loop unless quit
