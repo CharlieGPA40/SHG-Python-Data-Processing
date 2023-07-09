@@ -57,6 +57,8 @@ class SHG_Processing():
         Date = Parameter.iat[0, 1]
         step_size = Parameter.iat[7, 1]
         step_size = int(step_size)
+        file_name = str(Parameter.iat[1,1]).replace(" ","")
+        print(file_name)
         avg_x = 0
         avg_y = 0
         iteration = 0
