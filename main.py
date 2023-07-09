@@ -15,6 +15,7 @@ from pptx.util import Inches, Pt
 from pptx.shapes.autoshape import Shape as shape
 from lmfit import Model
 import lmfit
+from skimage import filters, measure, morphology, restoration
 
 
 class SHG_Processing():
@@ -34,17 +35,7 @@ class SHG_Processing():
         root = Tk()
         root.withdraw()
         folder_selected = filedialog.askdirectory(initialdir="/Users/labaccess/Library/CloudStorage/Box-Box/Jin Lab Shared Folder/SHG-RA data")
-        dir_list = os.listdir(folder_selected)
-        file_name = dir_list[0]
-        print(file_name)
-        file_name_1 = dir_list[1]
-        for i in range(len(file_name)-1, 0, -1):
-            # if file_name[i] == 'p':
-            #     file_name = file_name[:i+1]
-            if file_name[i] == '_':
-                file_name = file_name[:i]
-                break
-        print()
+        # dir_list = os.listdir(folder_selected)
         for i in range(len(folder_selected) - 1, 0, -1):
             if folder_selected[i] == '/':
                 folder_name_pptx = folder_selected[i+1:]
@@ -70,87 +61,110 @@ class SHG_Processing():
         degree = 130
         temp_temp = 80
         SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-        # SHG_Raw = np.loadtxt(folder_selected + file_name + "{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-        # SHG_Raw = np.loadtxt(folder_selected + 'STO_Nb_0_0035_{}k_{}deg'.format(temp_temp, degree) + '.txt', dtype=int, delimiter=',')
+        auto = True
+        if auto == True:
+            region_size = 80
 
+            # Variables to store the maximum intensity and its corresponding position
+            max_intensity = -np.inf
+            max_intensity_position = None
 
-        # from scipy.fft import ifftn
-        # import matplotlib.pyplot as plt
-        # import matplotlib.cm as cm
-        # import numpy as np
-        #
-        # fig, ax = pyplot.subplots()
-        # ft = np.fft.ifftshift(SHG_Raw)
-        # ft1 = np.fft.fft2(ft)
-        # ft2 = np.fft.fftshift(ft1)
-        # ft2= np.log(abs(ft2))
-        # print(ft2.argmax())
-        # print(ft2.argmax()/512)
-        # print(ft2.argmax()%512)
-        # print(np.max(ft2))
-        # ax.imshow(np.log(abs(ft2)))
-        # plt.show()
+            # Iterate over all possible square regions
+            for i in range(SHG_Raw.shape[0] - region_size + 1):
+                for j in range(SHG_Raw.shape[1] - region_size + 1):
+                    # Extract the current square region
+                    region = SHG_Raw[i:i + region_size, j:j + region_size]
 
-        # SHG_Raw = SHG_Raw[128:384, 128:384]
-        fig, ax = pyplot.subplots()
-        im = ax.imshow(SHG_Raw, vmin=0, vmax=5000)
-        polarization = Parameter.iat[8, 1]
-        fig.colorbar(im, ax=ax, label='{} Polarization'.format(polarization))
-        exposure_time = str(float(Parameter.iat[9, 1]))
-        title = str(Parameter.iat[1, 1]) + '' + str(Parameter.iat[2, 1]) + '' + str(Parameter.iat[3, 1]) \
-                + '\n' + str(Parameter.iat[4, 1]) + 'mW Exposure Time ' + exposure_time + 's Averaging ' \
-                + str(int(Parameter.iat[11, 1]))
-        pyplot.title(title + ' at {} Degree'.format(degree), pad=10, wrap=True)
-        # pyplot.show()
+                    # Calculate the intensity of the region
+                    intensity = np.sum(region)
 
-        def onclick(event):
-            if event.dblclick:
-                global cur_x, cur_y, click
-                cur_x = event.xdata
-                cur_y = event.ydata
-                click = event.button
-                if click == 1:
-                    print('Closing')
-                    pyplot.close()
-        connection_id = fig.canvas.mpl_connect('button_press_event', onclick)
-        pyplot.savefig(folder_selected+"Figure_1.png")
-        pyplot.show()
+                    # Check if the current intensity is the maximum
+                    if intensity > max_intensity:
+                        max_intensity = intensity
+                        max_intensity_position = (i, j)
+
+            # Get the coordinates of the square region with the maximum intensity
+            top_left_row, top_left_col = max_intensity_position
+            bottom_right_row = top_left_row + region_size - 1
+            bottom_right_col = top_left_col + region_size - 1
+
+            # Plot the heatmap with the square region of maximum intensity highlighted
+            pyplot.imshow(SHG_Raw, aspect='auto', vmin=0,vmax=5000)
+            polarization = Parameter.iat[8, 1]
+            pyplot.colorbar(label='{} Polarization'.format(polarization))
+            exposure_time = str(float(Parameter.iat[9, 1]))
+            title = str(Parameter.iat[1, 1]) + '' + str(Parameter.iat[2, 1]) + '' + str(Parameter.iat[3, 1]) \
+                    + '\n' + str(Parameter.iat[4, 1]) + 'mW Exposure Time ' + exposure_time + 's Averaging ' \
+                    + str(int(Parameter.iat[11, 1]))
+            pyplot.title(title + ' at {} Degree'.format(degree), pad=10, wrap=True)
+            pyplot.gca().add_patch(pyplot.Rectangle((top_left_col, top_left_row), region_size, region_size,
+                                              edgecolor='white', facecolor='none', linewidth=2))
+            pyplot.savefig(folder_selected + "Figure_1.png")
+            pyplot.show()
+
+        else:
+            fig, ax = pyplot.subplots()
+            im = pyplot.imshow(SHG_Raw, vmin=0, vmax=5000)
+            polarization = Parameter.iat[8, 1]
+            pyplot.colorbar(label='{} Polarization'.format(polarization))
+            exposure_time = str(float(Parameter.iat[9, 1]))
+            title = str(Parameter.iat[1, 1]) + '' + str(Parameter.iat[2, 1]) + '' + str(Parameter.iat[3, 1]) \
+                    + '\n' + str(Parameter.iat[4, 1]) + 'mW Exposure Time ' + exposure_time + 's Averaging ' \
+                    + str(int(Parameter.iat[11, 1]))
+            pyplot.title(title + ' at {} Degree'.format(degree), pad=10, wrap=True)
+
+            # pyplot.savefig(folder_selected + "Figure_1.png")
+            def onclick(event):
+                if event.dblclick:
+                    global cur_x, cur_y, click
+                    cur_x = event.xdata
+                    cur_y = event.ydata
+                    click = event.button
+                    if click == 1:
+                        print('Closing')
+                        pyplot.close()
+            connection_id = fig.canvas.mpl_connect('button_press_event', onclick)
+            pyplot.savefig(folder_selected+"Figure_1.png")
+            pyplot.show()
 
         deg_file = []
         sig_file = []
-        center_x = int(cur_x)
-        center_y = int(cur_y)
-        # center_x = 238
-        # center_y = 258
-        # center_x = int(input('Enter the center for x axis: '))
-        # center_y = int(input('Enter the center for y axis: '))
-        region_size = int(input('Enter the box size: '))
-        # region_size = 80
-        half_region_size = (np.ceil(region_size / 2)).astype(int)
-        # min_pos = (postion_max_x + 235 - half_region_size)[0]
-        # max_pos = (postion_max_x + 235 + half_region_size)[0]
-
-        SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-
-        fig, ax = pyplot.subplots()
-            # ax.imshow(SHG_Raw)
-        region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
-                             center_y - half_region_size: center_y + half_region_size]
-        im = ax.imshow(SHG_Raw, vmin=1000, vmax=5000)
-
-        fig.colorbar(im, ax=ax, label='Interactive colorbar')
-        ax.scatter(center_x, center_y, s=30, color='tomato', marker='x')
-        rect = patches.Rectangle((center_x - half_region_size, center_y - half_region_size),
-                                     region_size, region_size, linewidth=1, edgecolor='r', facecolor='none')
-            # Add the patch to the Axes
-        ax.add_patch(rect)
-        pyplot.show()
+        if not auto:
+            center_x = int(cur_x)
+            center_y = int(cur_y)
+        # # center_x = 238
+        # # center_y = 258
+        # # center_x = int(input('Enter the center for x axis: '))
+        # # center_y = int(input('Enter the center for y axis: '))
+            region_size = int(input('Enter the box size: '))
+        # # region_size = 80
+            half_region_size = (np.ceil(region_size / 2)).astype(int)
+        # # min_pos = (postion_max_x + 235 - half_region_size)[0]
+        # # max_pos = (postion_max_x + 235 + half_region_size)[0]
+        #
+            SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
+        #
+            fig, ax = pyplot.subplots()
+        #     # ax.imshow(SHG_Raw)
+            region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
+                                 center_y - half_region_size: center_y + half_region_size]
+            im = ax.imshow(SHG_Raw, vmin=1000, vmax=5000)
+        #
+            fig.colorbar(im, ax=ax, label='Interactive colorbar')
+            ax.scatter(center_x, center_y, s=30, color='tomato', marker='x')
+            rect = patches.Rectangle((center_x - half_region_size, center_y - half_region_size),
+                                         region_size, region_size, linewidth=1, edgecolor='r', facecolor='none')
+                # Add the patch to the Axes
+            ax.add_patch(rect)
+            pyplot.show()
         for degree in range(0, 365, step_size):
             deg_file = np.append(deg_file, degree)
             SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-
-            region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
-                             center_y - half_region_size: center_y + half_region_size]
+            if not auto:
+                region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
+                                 center_y - half_region_size: center_y + half_region_size]
+            else:
+                region = SHG_Raw[top_left_row: top_left_row + region_size, top_left_col: top_left_col + region_size]
 
             small_sum = sum(map(sum, region))
             large_sum = sum(map(sum, SHG_Raw))
