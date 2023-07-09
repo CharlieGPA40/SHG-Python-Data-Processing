@@ -92,11 +92,13 @@ class SHG_Processing():
             pyplot.imshow(SHG_Raw, aspect='auto', vmin=0,vmax=5000)
             polarization = Parameter.iat[8, 1]
             pyplot.colorbar(label='{} Polarization'.format(polarization))
+            pyplot.scatter(top_left_col + region_size/2, top_left_row + region_size/2, s=30, color='tomato', marker='x')
             exposure_time = str(float(Parameter.iat[9, 1]))
             title = str(Parameter.iat[1, 1]) + '' + str(Parameter.iat[2, 1]) + '' + str(Parameter.iat[3, 1]) \
                     + '\n' + str(Parameter.iat[4, 1]) + 'mW Exposure Time ' + exposure_time + 's Averaging ' \
                     + str(int(Parameter.iat[11, 1]))
             pyplot.title(title + ' at {} Degree'.format(degree), pad=10, wrap=True)
+            print(top_left_col, top_left_row)
             pyplot.gca().add_patch(pyplot.Rectangle((top_left_col, top_left_row), region_size, region_size,
                                               edgecolor='white', facecolor='none', linewidth=2))
             pyplot.savefig(folder_selected + "Figure_1.png")
@@ -164,7 +166,7 @@ class SHG_Processing():
                 region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
                                  center_y - half_region_size: center_y + half_region_size]
             else:
-                region = SHG_Raw[top_left_row: top_left_row + region_size, top_left_col: top_left_col + region_size]
+                region = SHG_Raw[top_left_col: top_left_col + region_size, top_left_row: top_left_row + region_size]
 
             small_sum = sum(map(sum, region))
             large_sum = sum(map(sum, SHG_Raw))
