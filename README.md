@@ -5,7 +5,7 @@ The purpose of this program is to process the lab RA-SHG data:
 1. Auto signal selection and process the corresponding data
 2. Data fitting program to fir the lab results
 
-For our equipment lists, check our poster: [Link]([https://jinlab.auburn.edu/research/software/](https://jinlab.auburn.edu/our-lab/))
+For our equipment lists, check our website: [Link](https://jinlab.auburn.edu/our-lab/)
 	
 Note: You can modify this program to fit your experimental setup.
 
