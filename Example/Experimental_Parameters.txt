@@ -1,0 +1,15 @@
+Date: July 05, 2023 : 00:59:27
+Sample: your_sample_name
+Fundamental or nonlinear: xxx
+Incidence angle: xxxxxx
+Power at sample (mW): 1234
+Start angle (degrees): 0 
+Termination angle (degrees): 360 
+Step size (degrees): 1234 
+Polarization configuration: ss,sp,ps,pp 
+ExposureTime (s): 12354
+EMGain: 1234
+Accumulation: 1234
+Starting Temperature: 1234
+Ending Temperature: 1234
+Step Temperature: 1234
