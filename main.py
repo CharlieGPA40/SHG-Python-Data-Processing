@@ -24,16 +24,7 @@ class SHG_Processing():
         self.run()
 
     def run(self):
-
-        SHGpath = 'SHG'  # Processed data directory
-        isExist = os.path.exists(SHGpath)
-        if not isExist:  # Create a new directory because it does not exist
-            os.makedirs(SHGpath)
-            print("The new directory is created!")
-            print('--------------------------------------------\n')
-
         root = Tk()
-
         folder_selected = filedialog.askdirectory(initialdir="/Users/labaccess/Library/CloudStorage/Box-Box/Jin Lab Shared Folder/SHG-RA data")
         # dir_list = os.listdir(folder_selected)
         root.withdraw()
@@ -43,13 +34,12 @@ class SHG_Processing():
                 break
 
         folder_selected = folder_selected + "/"
-        data_sel = 'n'
         Parameter = pd.read_csv(folder_selected + "Experimental_Parameters.txt", header=None, sep=':', engine='c')
         print(Parameter)
         Date = Parameter.iat[0, 1]
         step_size = Parameter.iat[7, 1]
         step_size = int(step_size)
-        file_name = str(Parameter.iat[1,1]).replace(" ","")
+        file_name = str(Parameter.iat[1, 1]).replace(" ", "")
         print(file_name)
         avg_x = 0
         avg_y = 0
@@ -114,8 +104,6 @@ class SHG_Processing():
                     + '\n' + str(Parameter.iat[4, 1]) + 'mW Exposure Time ' + exposure_time + 's Averaging ' \
                     + str(int(Parameter.iat[11, 1]))
             pyplot.title(title + ' at {} Degree'.format(degree), pad=10, wrap=True)
-
-            # pyplot.savefig(folder_selected + "Figure_1.png")
             def onclick(event):
                 if event.dblclick:
                     global cur_x, cur_y, click
@@ -135,18 +123,12 @@ class SHG_Processing():
             center_x = int(cur_x)
             center_y = int(cur_y)
             region_size = int(input('Enter the box size: '))
-        # # region_size = 80
             half_region_size = (np.ceil(region_size / 2)).astype(int)
-        # # min_pos = (postion_max_x + 235 - half_region_size)[0]
-        # # max_pos = (postion_max_x + 235 + half_region_size)[0]
-        #
             SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
             fig, ax = pyplot.subplots()
-        #     # ax.imshow(SHG_Raw)
             region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
                                  center_y - half_region_size: center_y + half_region_size]
             im = ax.imshow(SHG_Raw, vmin=1000, vmax=5000)
-        #
             fig.colorbar(im, ax=ax, label='Interactive colorbar')
             ax.scatter(center_x, center_y, s=30, color='tomato', marker='x')
             rect = patches.Rectangle((center_x - half_region_size, center_y - half_region_size),
@@ -246,8 +228,6 @@ class SHG_Processing():
             params.add('B', value=11)
             params.add('x0', value=0.1)
             result_sin = lmfit.minimize(shg_sin, params, args=(deg_file,), kws={'data': sig_file})
-            # result_cos = lmfit.minimize(shg_cos, params, args=(deg_file,), kws={'data': sig_file})
-            # sin_a1 = result_sin.params['a1'].value
             sin_A = result_sin.params['A'].value
             sin_a2 = result_sin.params['a2'].value
             sin_B = result_sin.params['B'].value

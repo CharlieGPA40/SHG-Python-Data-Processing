@@ -71,10 +71,6 @@ ax.add_patch(rect)
 plt.show()
 plt.close()
 
-tempset = [5, 10, 15, 20, 25, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 65, 70, 75, 80]
-
-# for temp in tempset:
-# final_temp = 122 #122
 for temp in range(start_temp, final_temp, step_temp):
     if temp == 41:
         SHG_Raw = np.loadtxt(folder_selected + filename + '_0deg'+"{}.1K".format(temp) + ".txt", dtype=int, delimiter=',')

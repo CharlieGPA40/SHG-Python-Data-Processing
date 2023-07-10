@@ -32,7 +32,7 @@ if not isExist:  # Create a new directory because it does not exist
 # Select the data folder
 root = Tk()
 root.withdraw()
-folder_selected = filedialog.askdirectory(initialdir="SHG RA/SHG Data")
+folder_selected = filedialog.askdirectory(initialdir="")
 folder_selected = folder_selected + "/"
 data_sel = 'n'
 
