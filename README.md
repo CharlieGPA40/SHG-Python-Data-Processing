@@ -1,5 +1,5 @@
 # SHG-Python-Data-Processing
-![License](https://img.shields.io/github/license/CharlieGPA40/SHG-Python-Data-Processing)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 The purpose of this program is to process the lab RA-SHG data:
 1. Auto signal selection and process the corresponding data
