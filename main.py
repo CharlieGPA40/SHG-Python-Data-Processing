@@ -33,9 +33,10 @@ class SHG_Processing():
             print('--------------------------------------------\n')
 
         root = Tk()
-        root.withdraw()
+
         folder_selected = filedialog.askdirectory(initialdir="/Users/labaccess/Library/CloudStorage/Box-Box/Jin Lab Shared Folder/SHG-RA data")
         # dir_list = os.listdir(folder_selected)
+        root.withdraw()
         for i in range(len(folder_selected) - 1, 0, -1):
             if folder_selected[i] == '/':
                 folder_name_pptx = folder_selected[i+1:]
@@ -98,7 +99,6 @@ class SHG_Processing():
                     + '\n' + str(Parameter.iat[4, 1]) + 'mW Exposure Time ' + exposure_time + 's Averaging ' \
                     + str(int(Parameter.iat[11, 1]))
             pyplot.title(title + ' at {} Degree'.format(degree), pad=10, wrap=True)
-            print(top_left_col, top_left_row)
             pyplot.gca().add_patch(pyplot.Rectangle((top_left_col, top_left_row), region_size, region_size,
                                               edgecolor='white', facecolor='none', linewidth=2))
             pyplot.savefig(folder_selected + "Figure_1.png")
@@ -134,10 +134,6 @@ class SHG_Processing():
         if not auto:
             center_x = int(cur_x)
             center_y = int(cur_y)
-        # # center_x = 238
-        # # center_y = 258
-        # # center_x = int(input('Enter the center for x axis: '))
-        # # center_y = int(input('Enter the center for y axis: '))
             region_size = int(input('Enter the box size: '))
         # # region_size = 80
             half_region_size = (np.ceil(region_size / 2)).astype(int)
@@ -145,7 +141,6 @@ class SHG_Processing():
         # # max_pos = (postion_max_x + 235 + half_region_size)[0]
         #
             SHG_Raw = np.loadtxt(folder_selected + file_name + "_{}deg".format(degree) + ".txt", dtype=int, delimiter=',')
-        #
             fig, ax = pyplot.subplots()
         #     # ax.imshow(SHG_Raw)
             region = SHG_Raw[center_x - half_region_size: center_x + half_region_size,
